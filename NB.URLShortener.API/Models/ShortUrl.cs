@@ -5,9 +5,9 @@ namespace NB.URLShortener.API.Models;
 public class ShortUrl
 {
     [Key]
-    public int Id { get; init; }
-    [Required]
+    public int Id { get; init; } 
     
+    [Required]
     [RegularExpression(@"^[a-zA-Z0-9_-]+$", 
         ErrorMessage = "Only letters, numbers, hyphens, and underscores allowed")]
     public string Slug { get; init; }

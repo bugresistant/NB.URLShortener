@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NB.URLShortener.API.DbContexts;
+using NB.URLShortener.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
     dbContextOptions.UseSqlite(
         builder.Configuration["ConnectionStrings:AppDBConnectionString"]));
+
+builder.Services.AddScoped<IUrlGenerator, SlugGenerator>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

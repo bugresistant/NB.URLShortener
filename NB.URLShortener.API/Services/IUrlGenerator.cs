@@ -2,5 +2,5 @@
 
 public interface IUrlGenerator
 {
-    
+    Task<string> GenerateUniqueSlugAsync();
 }
