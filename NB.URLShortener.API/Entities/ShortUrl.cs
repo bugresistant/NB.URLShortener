@@ -14,7 +14,7 @@ public class ShortUrl
     
     [Required]
     [MaxLength(100)]
-    [Url]
+    [Url(ErrorMessage = "Invalid URL format")]
     public string OriginalUrl { get; init; }
     [Required]
     public DateTimeOffset CreationDate { get; init; } = DateTimeOffset.UtcNow;

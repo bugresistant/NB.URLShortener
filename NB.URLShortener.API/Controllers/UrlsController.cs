@@ -25,11 +25,16 @@ namespace NB.URLShortener.API.Controllers
 
         // TODO: Proper validation of url
         [HttpPost("shorten")]
-        public async Task<IActionResult> ShortenUrl([FromBody] string originalUrl)
+        public async Task<IActionResult> ShortenUrl([FromBody] ShortenRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var slug = await _slugGenerator.GenerateUniqueSlugAsync();
             // HACK: should provide support for link expiration date
-            var shortenedUrl = new ShortUrl(originalUrl, slug, null);
+            var normalizedUrl = NormalizeUrl(request.OriginalUrl);
+            var shortenedUrl = new ShortUrl(normalizedUrl, slug, null);
             _context.ShortUrls.Add(shortenedUrl);
             await _context.SaveChangesAsync();
             
@@ -61,8 +66,17 @@ namespace NB.URLShortener.API.Controllers
                     s.SetProperty(p => p.ClickCounter, p => p.ClickCounter + 1));
 
             return Redirect(originalUrl);
-
         }
         
+        private string NormalizeUrl(string url)
+        {
+            if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return "https://" + url;
+            }
+
+            return url;
+        }
     }
 }
