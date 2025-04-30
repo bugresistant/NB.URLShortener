@@ -21,7 +21,7 @@ public class SlugGenerator: IUrlGenerator
         for (int i = 0; i < length; i += 1)
         {
             var index = _random.Next(VALID_CHARS.Length);
-            builder.Append(index);
+            builder.Append(VALID_CHARS[index]);
         }
 
         return builder.ToString();
