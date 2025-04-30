@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NB.URLShortener.API.DbContexts;
 using NB.URLShortener.API.Models;
 using NB.URLShortener.API.Services;
@@ -22,6 +23,7 @@ namespace NB.URLShortener.API.Controllers
             _slugGenerator = slugGenerator;
         }
 
+        // TODO: Proper validation of url
         [HttpPost("shorten")]
         public async Task<IActionResult> ShortenUrl([FromBody] string originalUrl)
         {
@@ -34,6 +36,32 @@ namespace NB.URLShortener.API.Controllers
             var shortUrl = $"{Request.Scheme}://{Request.Host}/r/{slug}";
 
             return Ok(new { shortUrl });
+        }
+
+        [HttpGet("r/{slug}")]
+        public async Task<IActionResult> RedirectToOriginalUrl(string slug)
+        {
+            var shortUrl = await _context.ShortUrls.FirstOrDefaultAsync(s => s.Slug == slug);
+            if (shortUrl == null)
+            {
+                return NotFound();
+            }
+            
+            var originalUrl = shortUrl.OriginalUrl;
+            
+            // Old way, not thread-safe
+            // shortUrl.ClickCounter += 1;
+            // await
+
+            // Now thread-safe increment to ClickCounter property, as when a couple of people could click on link simultaneously
+            // Not sure if it works because I'm not so advanced with LINQ yet and found the ready solution, but we'll find out eventually xD
+            await _context.ShortUrls
+                .Where(s => s.Slug == slug)
+                .ExecuteUpdateAsync(s => 
+                    s.SetProperty(p => p.ClickCounter, p => p.ClickCounter + 1));
+
+            return Redirect(originalUrl);
+
         }
         
     }
