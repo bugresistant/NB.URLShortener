@@ -31,7 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "URL Shortener API v1");
-        c.RoutePrefix = "docs"; // Access it at /docs instead of /
+        c.RoutePrefix = "docs";
     });
 }
 

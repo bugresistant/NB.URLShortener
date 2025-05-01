@@ -23,8 +23,15 @@ namespace NB.URLShortener.API.Controllers
             _slugGenerator = slugGenerator;
         }
 
-        // TODO: Proper validation of url
+        /// <summary>
+        /// Shorten provided url if it is correct.
+        /// </summary>
+        /// <param name="request">The original url to shorten.</param>
+        /// <response code="201">JSON with short url in body.</response>
+        /// <response code="400">Bad request status code if url is not valid.</response>
         [HttpPost("shorten")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> ShortenUrl([FromBody] ShortenRequest request)
         {
             if (!ModelState.IsValid)
@@ -40,10 +47,22 @@ namespace NB.URLShortener.API.Controllers
             
             var shortUrl = $"{Request.Scheme}://{Request.Host}/r/{slug}";
 
-            return Ok(new { shortUrl });
+            return CreatedAtAction(
+                nameof(RedirectToOriginalUrl),
+                new { slug },
+                new { shortUrl }
+            );
         }
 
+        /// <summary>
+        /// Redirects to original url using provided slug.
+        /// </summary>
+        /// <param name="slug">The unique identifier of the shortened url.</param>
+        /// <response code="302">Redirection to original page if found.</response>
+        /// <response code="404">Not found status code if slug is not found.</response>
         [HttpGet("/r/{slug}", Name = "RedirectRoute")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         public async Task<IActionResult> RedirectToOriginalUrl(string slug)
         {
             var shortUrl = await _context.ShortUrls.FirstOrDefaultAsync(s => s.Slug == slug);
