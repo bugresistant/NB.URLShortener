@@ -39,9 +39,8 @@ namespace NB.URLShortener.API.Controllers
                 return BadRequest();
             }
             var slug = await _slugGenerator.GenerateUniqueSlugAsync();
-            // HACK: should provide support for link expiration date
             var normalizedUrl = NormalizeUrl(request.OriginalUrl);
-            var shortenedUrl = new ShortUrl(normalizedUrl, slug, null);
+            var shortenedUrl = new ShortUrl(normalizedUrl, slug);
             _context.ShortUrls.Add(shortenedUrl);
             await _context.SaveChangesAsync();
             

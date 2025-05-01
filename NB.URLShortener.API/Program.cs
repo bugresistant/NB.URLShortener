@@ -41,4 +41,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseDefaultFiles(); // Serves index.html by default
+app.UseStaticFiles();  // Serves /wwwroot content
+
 app.Run();
