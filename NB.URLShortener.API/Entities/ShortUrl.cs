@@ -13,7 +13,7 @@ public class ShortUrl
     public string Slug { get; init; }
     
     [Required]
-    [MaxLength(100)]
+    [MaxLength(100, ErrorMessage = "Maximum length is 100 characters")]
     [Url(ErrorMessage = "Invalid URL format")]
     public string OriginalUrl { get; init; }
     [Required]

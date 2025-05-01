@@ -43,7 +43,7 @@ namespace NB.URLShortener.API.Controllers
             return Ok(new { shortUrl });
         }
 
-        [HttpGet("r/{slug}")]
+        [HttpGet("/r/{slug}", Name = "RedirectRoute")]
         public async Task<IActionResult> RedirectToOriginalUrl(string slug)
         {
             var shortUrl = await _context.ShortUrls.FirstOrDefaultAsync(s => s.Slug == slug);
