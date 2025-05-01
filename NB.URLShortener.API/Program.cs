@@ -16,7 +16,11 @@ builder.Services.AddScoped<IUrlGenerator, SlugGenerator>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(setupAction =>
+{
+    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, "NB.URLShortener.API.xml");
+    setupAction.IncludeXmlComments(xmlCommentsFullPath);
+});
 
 var app = builder.Build();
 
@@ -24,7 +28,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "URL Shortener API v1");
+        c.RoutePrefix = "docs"; // Access it at /docs instead of /
+    });
 }
 
 app.UseHttpsRedirection();
