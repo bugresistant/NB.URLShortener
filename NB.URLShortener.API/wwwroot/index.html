@@ -1,0 +1,70 @@
+﻿<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Anonymous URL Shortener</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <pre id="ascii-art" class="ascii-art"></pre>
+
+        <div class="form-container">
+            <form id="shorten-form">
+                <input
+                    type="url"
+                    id="url-input"
+                    placeholder="Enter URL"
+                    required
+                />
+                <button type="submit">Shorten</button>
+            </form>
+
+            <div id="result" class="result"></div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const totalFiles = 6;
+                const artIndex = Math.floor(Math.random() * totalFiles) + 1;
+
+                fetch(`/ascii/${artIndex}.txt`)
+                    .then((res) =>
+                        res.ok
+                            ? res.text()
+                            : Promise.reject("Failed to load ASCII"),
+                    )
+                    .then((art) => {
+                        document.getElementById("ascii-art").textContent = art;
+                    })
+                    .catch(console.error);
+
+                const form = document.getElementById("shorten-form");
+                form.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const url = document.getElementById("url-input").value;
+
+                    const res = await fetch("/api/urls/shorten", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ originalUrl: url }),
+                    });
+
+                    const resultBox = document.getElementById("result");
+
+                    if (!res.ok) {
+                        resultBox.innerHTML =
+                            "<p style='color:red;'>Error shortening URL</p>";
+                        return;
+                    }
+
+                    const data = await res.json();
+                    resultBox.innerHTML = `
+                <p>Shortened URL:</p>
+                <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>
+            `;
+                });
+            });
+        </script>
+    </body>
+</html>
