@@ -38,17 +38,16 @@ Installation
 
     dotnet run
 
-🔧 API Usage (via CLI)
 
-Example with curl:
+🔧 API Usage (via CLI) example with curl:
 
-# Shorten a URL
+#### Shorten a URL
 curl -X POST https://localhost:7081/api/urls/shorten \
   -H "Content-Type: application/json" \
   -d "{\"originalUrl\": \"https://example.com\"}" \
   -k
 
-# Redirect (use the returned short key)
+#### Redirect (use the returned short key)
 curl -L https://localhost:7081/r/{KEY}
 
 ⚠️ Frontend Disclaimer
