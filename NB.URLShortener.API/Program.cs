@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(dbContextOptions =>
         builder.Configuration["ConnectionStrings:AppDBConnectionString"]));
 
 builder.Services.AddScoped<IUrlGenerator, SlugGenerator>();
+builder.Services.AddScoped<IUrlRepository, UrlRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
